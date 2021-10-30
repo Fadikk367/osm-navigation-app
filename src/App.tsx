@@ -2,12 +2,10 @@ import React from 'react';
 
 import { Example } from 'components';
 
-function App() {
-  return (
-    <>
-      <Example />
-    </>
-  );
-}
+const App: React.FC = () => (
+  <>
+    <Example />
+  </>
+);
 
 export default App;

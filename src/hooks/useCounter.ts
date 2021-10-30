@@ -1,11 +1,17 @@
-import { useState } from "react";
+import { useState } from 'react';
 
-function useCounter(initialValue = 0, step = 1) {
+interface UseCounter {
+  value: number;
+  increment(): void;
+  decrement(): void;
+}
+
+function useCounter(initialValue = 0, step = 1): UseCounter {
   const [value, setValue] = useState(initialValue);
 
-  const increment = () => setValue(prev => prev + step);
+  const increment = (): void => setValue((prev) => prev + step);
 
-  const decrement = () => setValue(prev => prev - step);
+  const decrement = (): void => setValue((prev) => prev - step);
 
   return { value, increment, decrement };
 }
