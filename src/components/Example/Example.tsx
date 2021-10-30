@@ -7,9 +7,7 @@ const Example: React.FC = () => {
 
   return (
     <div>
-      <h3>
-        Example: {value}
-      </h3>
+      <h3>Example: {value}</h3>
       <div>
         <button onClick={increment}>+</button>
         <button onClick={decrement}>-</button>

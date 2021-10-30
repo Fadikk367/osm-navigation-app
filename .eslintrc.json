@@ -35,7 +35,7 @@
     "react/button-has-type": "off",
     "@typescript-eslint/no-use-before-define": ["error"],
     "@typescript-eslint/no-shadow": ["error"],
-    "linebreak-style": ["error", "windows"],
+    "linebreak-style": "off",
     "@typescript-eslint/explicit-function-return-type": ["error", {
       "allowExpressions": true
     }],
@@ -45,6 +45,16 @@
     "import/extensions": ["error", "ignorePackages", {
       "ts": "never",
       "tsx": "never"
+    }],
+    "comma-dangle": ["error", {
+      "arrays": "always-multiline",
+      "objects": "always-multiline",
+      "imports": "always-multiline",
+      "exports": "always-multiline",
+      "functions": "never"
+    }],
+    "object-curly-newline": ["error", {
+      "multiline": true
     }]
   },
   "settings": {
