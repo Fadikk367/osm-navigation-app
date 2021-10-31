@@ -4,8 +4,11 @@ import { Route, BrowserRouter as Router, Switch } from 'react-router-dom';
 import { Navigation } from 'components';
 import { About, CustomEngine, Home, NotFound, RoutingAnimation } from 'pages';
 
+import GlobalStyles from './styles';
+
 const App: React.FC = () => (
   <Router>
+    <GlobalStyles />
     <Navigation />
     <Switch>
       <Route exact path="/" component={Home} />
