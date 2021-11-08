@@ -11,6 +11,7 @@ import Typography from '@mui/material/Typography';
 
 import SelectWayOfTransport from 'components/SelectWayOfTransport';
 import { useRouting } from 'hooks';
+import { formatMapLocation } from 'utils/Map';
 
 import { RouteOptionsFormProps } from './types';
 
@@ -27,11 +28,15 @@ const RouteOptionsForm: React.FC<RouteOptionsFormProps> = ({ isOpen = true }) =>
           </IconButton>
         </Stack>
         <Stack margin={1} marginBottom={3} spacing={2}>
-          <TextField variant="standard" placeholder="Choose start point" value={startPoint ? startPoint.name : ''} />
+          <TextField
+            variant="standard"
+            placeholder="Choose start point"
+            value={startPoint && formatMapLocation(startPoint)}
+          />
           <TextField
             variant="standard"
             placeholder="Choose destination point"
-            value={destinationPoint ? destinationPoint.name : ''}
+            value={destinationPoint && formatMapLocation(destinationPoint)}
           />
         </Stack>
         <Divider flexItem />
