@@ -1,8 +1,9 @@
+/* eslint-disable no-console */
 import axios from 'axios';
 
 import { MapLocation } from 'services/Geocoding/types';
 
-import type { GraphhopperRouteResponse, NavigateOptions, Navigating, RoutePath } from './types';
+import { GeometryType, Maneuver, NavigateOptions, Navigating, OSMRRouteResponse, RoutePath } from './types';
 
 class OSMRRoutingService implements Navigating {
   private readonly baseUrl: string;
@@ -20,12 +21,37 @@ class OSMRRoutingService implements Navigating {
         `${destination.coordinates.lng},${destination.coordinates.lat}`;
 
       const url = `${this.baseUrl}/${options.transport}/${encodedPoints}?${params}`;
-      const res = await axios.get<GraphhopperRouteResponse>(url);
+      const res = await axios.get<OSMRRouteResponse>(url);
 
-      return res.data;
+      return OSMRRoutingService.transformResponse(res.data);
     } catch (err) {
+      console.log({ err });
       throw new Error('Bad Request');
     }
+  }
+
+  private static transformResponse(res: OSMRRouteResponse): RoutePath {
+    if (res.code !== 'Ok' || res.routes.length === 0) {
+      throw new Error('Not Found');
+    }
+
+    const route = res.routes[0].legs[0];
+
+    return {
+      distance: route.distance,
+      duration: route.duration,
+      geometry: {
+        type: GeometryType.LINE_STRING,
+        coordinates: route.steps.map((step) => step.geometry.coordinates).flat(),
+      },
+      steps: route.steps.map((step) => ({
+        distance: step.distance,
+        duration: step.duration,
+        point: step.maneuver.location,
+        maneuver: step.maneuver.type as Maneuver.TURN_LEFT,
+        text: step.name,
+      })),
+    };
   }
 
   // eslint-disable-next-line @typescript-eslint/no-unused-vars

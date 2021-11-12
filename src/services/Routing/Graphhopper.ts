@@ -2,7 +2,7 @@ import axios from 'axios';
 
 import { MapLocation } from 'services/Geocoding/types';
 
-import type { GraphhopperRouteResponse, NavigateOptions, Navigating, RoutePath } from './types';
+import { GeometryType, GraphhopperRouteResponse, Maneuver, NavigateOptions, Navigating, RoutePath } from './types';
 
 class GraphhopperRoutingService implements Navigating {
   private readonly baseUrl: string;
@@ -16,10 +16,34 @@ class GraphhopperRoutingService implements Navigating {
       const params = GraphhopperRoutingService.getParams(start, destination, options);
       const res = await axios.get<GraphhopperRouteResponse>(`${this.baseUrl}?${params}`);
 
-      return res.data;
+      return GraphhopperRoutingService.transformResponse(res.data);
     } catch (err) {
       throw new Error('Bad Request');
     }
+  }
+
+  private static transformResponse(res: GraphhopperRouteResponse): RoutePath {
+    if (res.paths.length === 0) {
+      throw new Error('Not found');
+    }
+
+    const route = res.paths[0];
+
+    return {
+      distance: route.distance,
+      duration: route.time,
+      geometry: {
+        type: GeometryType.LINE_STRING,
+        coordinates: route.points.coordinates,
+      },
+      steps: route.instructions.map((instruction) => ({
+        distance: instruction.distance,
+        duration: instruction.time,
+        point: route.points.coordinates[instruction.interval[0]],
+        maneuver: Maneuver.TURN_LEFT,
+        text: instruction.text,
+      })),
+    };
   }
 
   private static getParams(start: MapLocation, destination: MapLocation, options: NavigateOptions): string {
