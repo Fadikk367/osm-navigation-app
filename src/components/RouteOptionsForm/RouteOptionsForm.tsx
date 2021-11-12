@@ -16,7 +16,7 @@ import { formatMapLocation } from 'utils/Map';
 import { RouteOptionsFormProps } from './types';
 
 const RouteOptionsForm: React.FC<RouteOptionsFormProps> = ({ isOpen = true }) => {
-  const { startPoint, destinationPoint } = useRouting();
+  const { startPoint, destinationPoint, setEngine, engine, setTransport, transport } = useRouting();
 
   return (
     <div style={{ display: isOpen ? 'block' : 'none', transition: 'all 0.3s ease-in-out' }}>
@@ -40,12 +40,12 @@ const RouteOptionsForm: React.FC<RouteOptionsFormProps> = ({ isOpen = true }) =>
           />
         </Stack>
         <Divider flexItem />
-        <SelectWayOfTransport value="car" />
+        <SelectWayOfTransport value={transport} onChange={(value) => setTransport(value)} />
         <Divider flexItem />
         <Typography marginTop={2} marginBottom={1}>
           Choose routing engine
         </Typography>
-        <Select placeholder="engine" value="Graphhopper">
+        <Select placeholder="engine" value={engine} onChange={(e) => setEngine(e.target.value)}>
           <MenuItem value="Graphhopper">Graphhopper</MenuItem>
           <MenuItem value="OSMR">OSMR</MenuItem>
         </Select>

@@ -7,10 +7,12 @@ import IconButton from '@mui/material/IconButton';
 import Stack from '@mui/material/Stack';
 import Typography from '@mui/material/Typography';
 
+import { Transport } from 'services/Routing/types';
+
 import type { SelectWayOfTransportProps } from './types';
 
 const SelectWayOfTransport: React.FC<SelectWayOfTransportProps> = ({ value, onChange }) => {
-  const [selectedTransport, setSelectedTransport] = useState<string | undefined>(value);
+  const [selectedTransport, setSelectedTransport] = useState<Transport>(value);
 
   const styles = {
     selected: {
@@ -20,7 +22,7 @@ const SelectWayOfTransport: React.FC<SelectWayOfTransportProps> = ({ value, onCh
     },
   };
 
-  const handleSelect = (v: string): void => {
+  const handleSelect = (v: Transport): void => {
     setSelectedTransport(v);
     if (onChange) {
       onChange(v);
@@ -31,13 +33,22 @@ const SelectWayOfTransport: React.FC<SelectWayOfTransportProps> = ({ value, onCh
     <>
       <Typography marginTop={2}>Choose way of transport</Typography>
       <Stack direction="row" margin={1} spacing={3}>
-        <IconButton onClick={() => handleSelect('car')} sx={selectedTransport === 'car' ? styles.selected : {}}>
+        <IconButton
+          onClick={() => handleSelect(Transport.CAR)}
+          sx={selectedTransport === Transport.CAR ? styles.selected : {}}
+        >
           <DirectionsCarIcon />
         </IconButton>
-        <IconButton onClick={() => handleSelect('bike')} sx={selectedTransport === 'bike' ? styles.selected : {}}>
+        <IconButton
+          onClick={() => handleSelect(Transport.BIKE)}
+          sx={selectedTransport === Transport.BIKE ? styles.selected : {}}
+        >
           <DirectionsBikeIcon />
         </IconButton>
-        <IconButton onClick={() => handleSelect('foot')} sx={selectedTransport === 'foot' ? styles.selected : {}}>
+        <IconButton
+          onClick={() => handleSelect(Transport.FOOT)}
+          sx={selectedTransport === Transport.FOOT ? styles.selected : {}}
+        >
           <DirectionsWalkIcon />
         </IconButton>
       </Stack>
