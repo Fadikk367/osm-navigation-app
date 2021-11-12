@@ -9,7 +9,7 @@ class OSMRRoutingService implements Navigating {
   private readonly baseUrl: string;
 
   constructor() {
-    this.baseUrl = 'https://router.project-osrm.org/route/v1';
+    this.baseUrl = 'https://routing.openstreetmap.de';
   }
 
   async navigate(start: MapLocation, destination: MapLocation, options: NavigateOptions): Promise<RoutePath> {
@@ -20,7 +20,7 @@ class OSMRRoutingService implements Navigating {
         ';' +
         `${destination.coordinates.lng},${destination.coordinates.lat}`;
 
-      const url = `${this.baseUrl}/${options.transport}/${encodedPoints}?${params}`;
+      const url = `${this.baseUrl}/routed-${options.transport}/route/v1/driving/${encodedPoints}?${params}`;
       const res = await axios.get<OSMRRouteResponse>(url);
 
       return OSMRRoutingService.transformResponse(res.data);

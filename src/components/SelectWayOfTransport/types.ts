@@ -1,4 +1,6 @@
+import { Transport } from 'services/Routing/types';
+
 export interface SelectWayOfTransportProps {
-  onChange?(value: string): void;
-  value?: string;
+  onChange?(value: Transport): void;
+  value: Transport;
 }

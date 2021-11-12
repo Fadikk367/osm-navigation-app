@@ -17,20 +17,21 @@ const RoutingProvider: React.FC = ({ children }) => {
   const [destinationPoint, setDestinationPoint] = useState<MapLocation>();
   const [engine, setEngine] = useState<string>('OSMR');
   const [route, setRoute] = useState<RoutePath>();
+  const [transport, setTransport] = useState<Transport>(Transport.CAR);
   const [error, setError] = useState<unknown>();
 
   useEffect(() => {
     async function recalculateRoute(): Promise<void> {
       if (startPoint && destinationPoint) {
         const routingService = routing.getRoutingByName(engine);
-        const result = await routingService.navigate(startPoint, destinationPoint, { transport: Transport.CAR });
+        const result = await routingService.navigate(startPoint, destinationPoint, { transport });
         result.geometry.coordinates = result.geometry.coordinates.map(([lat, lng]) => [lng, lat]);
 
         setRoute(result);
       }
     }
     recalculateRoute();
-  }, [startPoint, destinationPoint, engine]);
+  }, [startPoint, destinationPoint, engine, transport]);
 
   const setStart = async (point: LatLng): Promise<void> => {
     try {
@@ -58,7 +59,19 @@ const RoutingProvider: React.FC = ({ children }) => {
 
   return (
     <RoutingContext.Provider
-      value={{ startPoint, destinationPoint, engine, error, route, setStart, setDestination, setEngine, clear }}
+      value={{
+        startPoint,
+        destinationPoint,
+        engine,
+        error,
+        route,
+        transport,
+        setTransport,
+        setStart,
+        setDestination,
+        setEngine,
+        clear,
+      }}
     >
       {children}
     </RoutingContext.Provider>
