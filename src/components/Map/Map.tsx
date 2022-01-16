@@ -1,5 +1,7 @@
-import React from 'react';
-import { CircleMarker, MapContainer, Marker, TileLayer, Tooltip, useMapEvents } from 'react-leaflet';
+import React, { useEffect } from 'react';
+import { CircleMarker, MapContainer, Marker, TileLayer, Tooltip, useMap, useMapEvents } from 'react-leaflet';
+
+import { customRoutingService } from 'services/Routing';
 
 import { useRouting } from 'hooks';
 
@@ -7,6 +9,24 @@ import type { MapEventsProps, MapProps } from './types';
 
 const MapEvents: React.FC<MapEventsProps> = ({ onClick }) => {
   useMapEvents({ click: onClick });
+
+  return null;
+};
+
+const FitMapToBounds: React.FC = () => {
+  const routing = useRouting();
+  const map = useMap();
+
+  useEffect(() => {
+    async function fitBounds(): Promise<void> {
+      const bounds = await customRoutingService.getSupprotedBounds();
+      map.fitBounds(bounds);
+    }
+
+    if (routing.engine === 'Custom') {
+      fitBounds();
+    }
+  }, [routing.engine, map]);
 
   return null;
 };
@@ -25,9 +45,6 @@ const Map: React.FC<MapProps> = ({ children, markers = [], ...events }) => {
     </CircleMarker>
   ));
 
-  // eslint-disable-next-line no-console
-  console.log({ circleMarkers });
-
   return (
     <MapContainer style={{ flex: 1 }} center={[50.0612, 19.938]} zoom={13} scrollWheelZoom={false}>
       <TileLayer
@@ -35,6 +52,7 @@ const Map: React.FC<MapProps> = ({ children, markers = [], ...events }) => {
         url="https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png"
       />
       <MapEvents {...events} />
+      <FitMapToBounds />
       {renderedMarkers}
       {children}
       {circleMarkers}

@@ -7,6 +7,26 @@ import { GeometryType, GraphhopperRouteResponse, Maneuver, NavigateOptions, Navi
 class GraphhopperRoutingService implements Navigating {
   private readonly baseUrl: string;
 
+  private static readonly maneuverBySign: {[key: string]: Maneuver} = {
+    '-98': Maneuver.U_TURN,
+    '-8': Maneuver.LEFT_U_TURN,
+    '-7': Maneuver.KEEP_LEFT,
+    '-6': Maneuver.LEAVE_ROUNDABOUT,
+    '-3': Maneuver.TURN_SLIGHT_LEFT,
+    '-2': Maneuver.TURN_LEFT,
+    '-1': Maneuver.TURN_SLIGHT_LEFT,
+    '0': Maneuver.CONTINUE,
+    '1': Maneuver.TURN_SLIGHT_RIGHT,
+    '2': Maneuver.TURN_RIGHT,
+    '3': Maneuver.TURN_SHARP_RIGHT,
+    '4': Maneuver.ARRIVED,
+    '5': Maneuver.UNSPECIFIED,
+    '6': Maneuver.ENTER_ROUNDABOUT,
+    '7': Maneuver.KEEP_RIGHT,
+    '8': Maneuver.U_TURN,
+    '*': Maneuver.UNSPECIFIED,
+  };
+
   constructor() {
     this.baseUrl = 'https://graphhopper.com/api/1/route/';
   }
@@ -30,17 +50,17 @@ class GraphhopperRoutingService implements Navigating {
     const route = res.paths[0];
 
     return {
-      distance: route.distance,
-      duration: route.time,
+      distance: route.distance / 1000,
+      duration: route.time / (1000 * 60),
       geometry: {
         type: GeometryType.LINE_STRING,
         coordinates: route.points.coordinates,
       },
       steps: route.instructions.map((instruction) => ({
-        distance: instruction.distance,
-        duration: instruction.time,
+        distance: instruction.distance / 1000,
+        duration: instruction.time / (1000 * 60),
         point: route.points.coordinates[instruction.interval[0]],
-        maneuver: Maneuver.TURN_LEFT,
+        maneuver: GraphhopperRoutingService.getManeuverBySign(instruction.sign),
         text: instruction.text,
       })),
     };
@@ -57,6 +77,16 @@ class GraphhopperRoutingService implements Navigating {
     params.append('debug', 'true');
 
     return params.toString();
+  }
+
+  private static getManeuverBySign(sign: number): Maneuver {
+    let maneuver = GraphhopperRoutingService.maneuverBySign[sign];
+
+    if (!maneuver) {
+      maneuver = Maneuver.UNSPECIFIED;
+    }
+
+    return maneuver;
   }
 }
 
