@@ -32,7 +32,7 @@ const SelectWayOfTransport: React.FC<SelectWayOfTransportProps> = ({ value, onCh
   return (
     <>
       <Typography marginTop={2}>Choose way of transport</Typography>
-      <Stack direction="row" margin={1} spacing={3}>
+      <Stack direction="row" margin={1} spacing={3} justifyContent="space-between">
         <IconButton
           onClick={() => handleSelect(Transport.CAR)}
           sx={selectedTransport === Transport.CAR ? styles.selected : {}}

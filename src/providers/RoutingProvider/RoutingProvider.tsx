@@ -23,11 +23,15 @@ const RoutingProvider: React.FC = ({ children }) => {
   useEffect(() => {
     async function recalculateRoute(): Promise<void> {
       if (startPoint && destinationPoint) {
-        const routingService = routing.getRoutingByName(engine);
-        const result = await routingService.navigate(startPoint, destinationPoint, { transport });
-        result.geometry.coordinates = result.geometry.coordinates.map(([lat, lng]) => [lng, lat]);
+        try {
+          const routingService = routing.getRoutingByName(engine);
+          const result = await routingService.navigate(startPoint, destinationPoint, { transport });
+          result.geometry.coordinates = result.geometry.coordinates.map(([lat, lng]) => [lng, lat]);
 
-        setRoute(result);
+          setRoute(result);
+        } catch (err) {
+          console.log(err);
+        }
       }
     }
     recalculateRoute();

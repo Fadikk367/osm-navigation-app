@@ -38,15 +38,15 @@ class OSMRRoutingService implements Navigating {
     const route = res.routes[0].legs[0];
 
     return {
-      distance: route.distance,
-      duration: route.duration,
+      distance: route.distance / 1000,
+      duration: route.duration / 60,
       geometry: {
         type: GeometryType.LINE_STRING,
         coordinates: route.steps.map((step) => step.geometry.coordinates).flat(),
       },
       steps: route.steps.map((step) => ({
-        distance: step.distance,
-        duration: step.duration,
+        distance: step.distance / 1000,
+        duration: step.duration / 60,
         point: step.maneuver.location,
         maneuver: step.maneuver.type as Maneuver.TURN_LEFT,
         text: step.name,
